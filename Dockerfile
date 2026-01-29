@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ghcr.io/labring-actions/devbox-runtime-expt/ubuntu-22.04:v2.5.0-rc.2-en-us
 
 # Evitar prompts interativos
 ENV DEBIAN_FRONTEND=noninteractive
