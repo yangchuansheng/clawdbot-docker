@@ -1,7 +1,9 @@
-FROM ubuntu:22.04
+FROM ghcr.io/lingdie/devbox-runtime-expt/debian-12.6:v2.5.0-rc.4-en-us
 
 # Evitar prompts interativos
 ENV DEBIAN_FRONTEND=noninteractive
+
+USER root
 
 # Instalar dependencias do sistema
 RUN apt-get update && apt-get install -y \
@@ -9,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     git \
     ca-certificates \
     gnupg \
+    iproute2 \
     && rm -rf /var/lib/apt/lists/*
 
 # Instalar Node.js 22
@@ -16,27 +19,33 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
-# Instalar clawdbot globalmente
-RUN npm install -g clawdbot
+# Instalar openclaw globalmente
+RUN npm install -g openclaw@latest
+RUN npm install -g bun
+RUN npm install -g clawhub
 
 # Copiar scripts de auto-approve e entrypoint
-COPY --chown=clawdbot:clawdbot auto-approve.js /home/clawdbot/
-COPY --chown=clawdbot:clawdbot entrypoint.sh /home/clawdbot/
-
-# Criar usuario nao-root
-RUN useradd -m -s /bin/bash clawdbot
+COPY --chown=devbox:devbox auto-approve.js /home/devbox/project
+COPY --chown=devbox:devbox entrypoint.sh /home/devbox/project
+COPY --chown=devbox:devbox openclaw.json /home/devbox/.openclaw
 
 # Criar diretorios com permissoes corretas
-RUN mkdir -p /home/clawdbot/.clawdbot /home/clawdbot/workspace && \
-    chown -R clawdbot:clawdbot /home/clawdbot && \
-    chmod +x /home/clawdbot/entrypoint.sh
+RUN mkdir -p /home/devbox/.clawdbot /home/devbox/project/workspace && \
+    chown -R devbox:devbox /home/devbox && \
+    chmod +x /home/devbox/project/entrypoint.sh
 
-# Criar configuração inicial com allowInsecureAuth
-RUN echo '{"gateway":{"controlUi":{"enabled":true,"allowInsecureAuth":true}},"messages":{"ackReactionScope":"group-mentions"},"agents":{"defaults":{"maxConcurrent":4,"subagents":{"maxConcurrent":8},"compaction":{"mode":"safeguard"}}},"plugins":{"entries":{"telegram":{"enabled":true}}}}' > /home/clawdbot/.clawdbot/clawdbot.json && \
-    chown clawdbot:clawdbot /home/clawdbot/.clawdbot/clawdbot.json
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; \
+    dpkg -i google-chrome-stable_current_amd64.deb; \
+    apt --fix-broken install -y
 
-USER clawdbot
-WORKDIR /home/clawdbot
+USER devbox
+WORKDIR /home/devbox/project
+
+RUN clawhub install openai-whisper; \
+    clawhub install auto-updater; \
+    clawhub install marketing-skills; \
+    clawhub install kubectl; \
+    clawhub install ralph-loops
 
 # Configurar ambiente de producao
 ENV NODE_ENV=production
@@ -46,7 +55,7 @@ ENV CLAWDBOT_GATEWAY_BIND=0.0.0.0
 EXPOSE 18789
 
 # Volumes para persistencia
-VOLUME ["/home/clawdbot/.clawdbot", "/home/clawdbot/workspace"]
+VOLUME ["/home/devbox/.clawdbot", "/home/devbox/project/workspace"]
 
 # Comando de entrada
-CMD ["/home/clawdbot/entrypoint.sh"]
+CMD ["/home/devbox/project/entrypoint.sh"]
