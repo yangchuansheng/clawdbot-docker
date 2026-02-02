@@ -28,8 +28,8 @@
     "mode": "merge",
     "providers": {
       "openai": {
-        "baseUrl": "<OPENAI_BASEURL>/v1",
-        "apiKey": "<OPENAI_APIKEY>",
+        "baseUrl": "<OPENAI_BASE_URL>/v1",
+        "apiKey": "<OPENAI_API_KEY>",
         "auth": "api-key",
         "api": "openai-completions",
         "models": [
