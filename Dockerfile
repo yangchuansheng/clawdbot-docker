@@ -24,15 +24,16 @@ RUN npm install -g openclaw@latest
 RUN npm install -g bun
 RUN npm install -g clawhub
 
-# Copiar scripts de auto-approve e entrypoint
-COPY --chown=devbox:devbox auto-approve.js /home/devbox/project
-COPY --chown=devbox:devbox entrypoint.sh /home/devbox/project
-COPY --chown=devbox:devbox openclaw.json /home/devbox/.openclaw
-
 # Criar diretorios com permissoes corretas
 RUN mkdir -p /home/devbox/.clawdbot /home/devbox/project/workspace && \
     chown -R devbox:devbox /home/devbox && \
     chmod +x /home/devbox/project/entrypoint.sh
+
+# Copiar scripts de auto-approve e entrypoint
+COPY --chown=devbox:devbox auto-approve.js /home/devbox/project
+COPY --chown=devbox:devbox entrypoint.sh /home/devbox/project
+COPY --chown=devbox:devbox .env.example /home/devbox/project/.env
+COPY --chown=devbox:devbox openclaw.json /home/devbox/.openclaw/
 
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; \
     dpkg -i google-chrome-stable_current_amd64.deb; \
@@ -50,12 +51,3 @@ RUN clawhub install openai-whisper; \
 # Configurar ambiente de producao
 ENV NODE_ENV=production
 ENV CLAWDBOT_GATEWAY_BIND=0.0.0.0
-
-# Porta do gateway
-EXPOSE 18789
-
-# Volumes para persistencia
-VOLUME ["/home/devbox/.clawdbot", "/home/devbox/project/workspace"]
-
-# Comando de entrada
-CMD ["/home/devbox/project/entrypoint.sh"]
