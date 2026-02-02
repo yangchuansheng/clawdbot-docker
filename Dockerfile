@@ -37,7 +37,8 @@ COPY --chown=devbox:devbox openclaw.json /home/devbox/.openclaw/
 
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; \
     dpkg -i google-chrome-stable_current_amd64.deb; \
-    apt --fix-broken install -y
+    apt --fix-broken install -y; \
+    rm -rf google-chrome-stable_current_amd64.deb
 
 USER devbox
 WORKDIR /home/devbox/project
