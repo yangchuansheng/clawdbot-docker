@@ -42,6 +42,9 @@ RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.d
 USER devbox
 WORKDIR /home/devbox/project
 
+RUN cd project; \
+    cp .env.example .env
+
 RUN clawhub install openai-whisper; \
     clawhub install auto-updater; \
     clawhub install marketing-skills; \
