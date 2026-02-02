@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const configDir = "/home/clawdbot/.clawdbot/devices";
+const configDir = "/home/devbox/project/devices";
 const pendingPath = path.join(configDir, "pending.json");
 const pairedPath = path.join(configDir, "paired.json");
 
