@@ -1,4 +1,4 @@
-FROM ghcr.io/lingdie/devbox-runtime-expt/debian-12.6:v2.5.0-rc.4-en-us
+FROM ghcr.io/labring-actions/devbox-runtime-expt/debian-12.6:v2.5.0-rc.4-en-us
 
 # Evitar prompts interativos
 ENV DEBIAN_FRONTEND=noninteractive
