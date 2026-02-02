@@ -48,6 +48,8 @@ RUN clawhub install openai-whisper; \
     clawhub install kubectl; \
     clawhub install ralph-loops
 
+USER root
+
 # Configurar ambiente de producao
 ENV NODE_ENV=production
 ENV CLAWDBOT_GATEWAY_BIND=0.0.0.0
