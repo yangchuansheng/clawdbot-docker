@@ -32,7 +32,7 @@ RUN mkdir -p /home/devbox/.clawdbot /home/devbox/project/workspace && \
 # Copiar scripts de auto-approve e entrypoint
 COPY --chown=devbox:devbox auto-approve.js /home/devbox/project
 COPY --chown=devbox:devbox entrypoint.sh /home/devbox/project
-COPY --chown=devbox:devbox .env.example /home/devbox/project/.env
+COPY --chown=devbox:devbox .env.example /home/devbox/project/.env.example
 COPY --chown=devbox:devbox openclaw.json /home/devbox/.openclaw/
 
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; \
