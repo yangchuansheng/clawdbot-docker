@@ -1,0 +1,63 @@
+name: Build and push latest Openclaw(Clawdbot) Docker image
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "16 0 * * *"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-docker-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get current date and time
+        id: datetime
+        run: echo "datetime=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      #- name: Get tag
+      #  id: tag
+      #  uses: devops-actions/action-get-tag@v1.0.1
+      #  with:
+      #    strip_v: true # Optional: Remove 'v' character from version
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            ghcr.io/${{ github.actor }}/openclaw-devbox
+          tags: |
+            type=raw,value=${{ steps.datetime.outputs.datetime }}-zh-cn
+          flavor: |
+            latest=false
+
+      - name: Build and push Docker images to ghcr.io
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile_zh-cn
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
