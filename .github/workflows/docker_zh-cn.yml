@@ -1,4 +1,4 @@
-name: Build and push latest Openclaw(Clawdbot) Docker image
+name: Build and push latest Openclaw(Clawdbot) zh-cn Docker image
 
 on:
   workflow_dispatch:
