@@ -1,3 +1,3 @@
 #!/bin/bash
-node /home/clawdbot/auto-approve.js &
-exec clawdbot gateway --allow-unconfigured --bind lan
+node /home/openclaw/auto-approve.js &
+exec openclaw gateway --allow-unconfigured --bind lan
